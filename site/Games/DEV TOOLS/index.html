@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="icon.png">
+  <meta charset="UTF-8">
+  <title>WhimsiCube Dev Hub - Offline Developer Tools</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      background: #0b1c2d;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 16px;
+      background: #102a44;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      position: relative;
+    }
+
+    .logout {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      background: #1b3a5c;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .logout:hover {
+      background: #265a8f;
+    }
+
+    .games {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .game-card {
+      background: #122b44;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .game-card img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+    }
+
+    .game-title {
+      padding: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    /* LOGIN SCREEN */
+    #login {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0b1c2d;
+      z-index: 1000;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    #login.hide {
+      opacity: 0;
+      transform: scale(1.05);
+      pointer-events: none;
+    }
+
+    #loginBox {
+      background: #122b44;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      animation: floatIn 0.6s ease;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    #loginBox input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+      margin-top: 10px;
+      width: 220px;
+    }
+
+    #loginBox button {
+      margin-top: 14px;
+      padding: 10px 22px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+      background: #1b3a5c;
+      color: white;
+      cursor: pointer;
+    }
+
+    #loginBox button:hover {
+      background: #265a8f;
+    }
+
+    #error {
+      color: #ff6b6b;
+      margin-top: 10px;
+    }
+
+    /* APP FADE IN */
+    #app {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    #app.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div id="loginBox">
+    <h2>🔒 Protected</h2>
+    <p>Enter password to continue</p>
+    <input type="password" id="passwordInput" placeholder="Password">
+    <br>
+    <button onclick="checkPassword()">Unlock</button>
+    <div id="error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    WhimsiCube Offline Dev Hub
+    <button class="logout" onclick="logout()">Logout</button>
+  </header>
+
+  <div class="games">
+    <div class="game-card" onclick="play('HTML typer/index.html')">
+      <img src="icon.png" alt="Code Editor">
+      <div class="game-title">Code Editor</div>
+    </div>
+
+    <div class="game-card" onclick="play('AI/index.html')">
+      <img src="icon.png" alt="AI Code Assistant">
+      <div class="game-title">AI Code Assistant</div>
+    </div>
+
+    <div class="game-card" onclick="play('converter/index.html')">
+      <img src="icon.png" alt="Code Converter">
+      <div class="game-title">Code Converter</div>
+    </div>
+  </div>
+
+  <footer>
+    Offline Dev Tools • HTML • JS • JSON • CSS • TXT • MORE!!!
+  </footer>
+</div>
+
+<script>
+  const PASSWORD = "CanadianDeveloper";
+
+  const login = document.getElementById("login");
+  const app = document.getElementById("app");
+
+  // Auto-unlock if remembered
+  if (localStorage.getItem("devhub-auth") === "true") {
+    unlock();
+  }
+
+  function checkPassword() {
+    const input = document.getElementById("passwordInput").value;
+    const error = document.getElementById("error");
+
+    if (input === PASSWORD) {
+      localStorage.setItem("devhub-auth", "true");
+      unlock();
+    } else {
+      error.textContent = "❌ Incorrect password";
+    }
+  }
+
+  function unlock() {
+    login.classList.add("hide");
+    setTimeout(() => {
+      login.style.display = "none";
+      app.classList.add("show");
+    }, 600);
+  }
+
+  function logout() {
+    localStorage.removeItem("devhub-auth");
+    location.reload();
+  }
+
+  function play(path) {
+    window.open(path, "_blank");
+  }
+</script>
+
+</body>
+</html>

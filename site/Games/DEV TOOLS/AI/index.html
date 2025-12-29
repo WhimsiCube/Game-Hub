@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Offline Code Helper Assistant</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family: 'Lexend', sans-serif;
+    background: #f4f6f8;
+    margin: 20px;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    font-weight: 900;
+}
+
+.controls {
+    margin-bottom: 12px;
+}
+
+select, button {
+    padding: 10px 14px;
+    font-family: 'Lexend', sans-serif;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-right: 8px;
+}
+
+button {
+    background: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2980b9;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.editor-controls {
+    margin-bottom: 6px;
+}
+
+textarea {
+    width: 100%;
+    height: 320px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+}
+
+.panel {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    height: 350px;
+    overflow-y: auto;
+}
+
+pre {
+    white-space: pre-wrap;
+    font-family: monospace;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🧠 Offline Code Helper Assistant</h1>
+
+<div class="controls">
+    <label for="language">Language:</label>
+    <select id="language">
+        <option value="js">JavaScript</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="py">Python</option>
+        <option value="json">JSON</option>
+    </select>
+
+    <button onclick="fixCode()">Fix / Format Code</button>
+</div>
+
+<div class="container">
+    <!-- LEFT SIDE -->
+    <div>
+        <div class="editor-controls">
+            <button onclick="copyCode()">📋 Copy to Clipboard</button>
+        </div>
+
+        <textarea id="input" placeholder="Paste your code here..."></textarea>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="panel">
+        <strong>Assistant Output:</strong>
+        <pre id="assistant"></pre>
+    </div>
+</div>
+
+<script>
+function fixCode() {
+    const lang = document.getElementById("language").value;
+    let code = document.getElementById("input").value;
+    const output = document.getElementById("assistant");
+    let messages = [];
+
+    if (/i can('|no)t code|this sucks|nothing works/i.test(code)) {
+        messages.push("You absolutely can code. Bugs are normal — let's solve this together 💙");
+    }
+
+    if (lang === "js") {
+        code = formatBraces(code);
+        messages.push("Formatted JavaScript indentation only.");
+
+        if (code.includes("==") && !code.includes("===")) {
+            messages.push("Tip: Consider using '===' instead of '==' for safer comparisons.");
+        }
+
+    } else if (lang === "html") {
+        code = formatHtmlIndent(code);
+        messages.push("Formatted HTML indentation only.");
+
+    } else if (lang === "css") {
+        code = formatCssWhitespace(code);
+        messages.push("Formatted CSS spacing only.");
+
+    } else if (lang === "py") {
+        code = code.replace(/\t/g, "    ");
+        messages.push("Replaced tabs with spaces.");
+
+    } else if (lang === "json") {
+        try {
+            code = JSON.stringify(JSON.parse(code), null, 4);
+            messages.push("Formatted JSON structure.");
+        } catch {
+            messages.push("⚠️ Invalid JSON detected. No changes applied.");
+        }
+    }
+
+    document.getElementById("input").value = code;
+    output.textContent = messages.join("\n");
+}
+
+function copyCode() {
+    const text = document.getElementById("input").value;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("✅ Code copied to clipboard!");
+    });
+}
+
+/* ---------- FORMATTERS ---------- */
+
+function formatBraces(text) {
+    let indent = 0;
+    return text.split("\n").map(line => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith("}")) indent--;
+        const result = "  ".repeat(Math.max(indent,0)) + trimmed;
+        if (trimmed.endsWith("{")) indent++;
+        return result;
+    }).join("\n");
+}
+
+function formatHtmlIndent(html) {
+    let indent = 0;
+    return html.split("\n").map(line => {
+        const trimmed = line.trim();
+        if (/^<\/.+>/.test(trimmed)) indent--;
+        const result = "  ".repeat(Math.max(indent,0)) + trimmed;
+        if (/^<[^!\/].*[^\/]>$/.test(trimmed)) indent++;
+        return result;
+    }).join("\n");
+}
+
+function formatCssWhitespace(css) {
+    return css
+        .split("\n")
+        .map(line => line.trim())
+        .join("\n");
+}
+</script>
+
+</body>
+</html>

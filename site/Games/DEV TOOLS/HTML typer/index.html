@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="icon.png">
+<meta charset="UTF-8">
+<title>Code Editor</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        font-family: 'Lexend', sans-serif;
+        background: #f4f6f8;
+        margin: 20px;
+        color: #333;
+    }
+
+    h1 {
+        text-align: center;
+        font-weight: 900;
+    }
+
+    .controls {
+        margin-bottom: 12px;
+    }
+
+    select, button {
+        padding: 10px 14px;
+        font-family: 'Lexend', sans-serif;
+        font-size: 14px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        margin-right: 10px;
+    }
+
+    button {
+        background: #3498db;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #2980b9;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .editor-wrapper {
+        position: relative;
+    }
+
+    textarea {
+        width: 100%;
+        height: 400px;
+        padding: 12px;
+        font-family: monospace;
+        font-size: 14px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        resize: vertical;
+    }
+
+    #autocomplete {
+        position: absolute;
+        top: 40px;
+        left: 10px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 14px;
+        display: none;
+        z-index: 1000;
+        max-height: 150px;
+        overflow-y: auto;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    #autocomplete div {
+        padding: 6px 10px;
+        cursor: pointer;
+    }
+
+    #autocomplete div:hover {
+        background: #eee;
+    }
+
+    iframe {
+        width: 100%;
+        height: 400px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background: white;
+    }
+</style>
+</head>
+<body>
+
+<h1><strong>Code Editor<strong></h1>
+
+<div class="controls">
+    <label>Format:</label>
+    <select id="format">
+        <option value="txt">TXT</option>
+        <option value="html">HTML</option>
+        <option value="js">JavaScript</option>
+        <option value="py">Python</option>
+        <option value="css">CSS</option>
+        <option value="json">JSON</option>
+    </select>
+
+    <button onclick="downloadFile()">Download</button>
+</div>
+
+<div class="container">
+    <div class="editor-wrapper">
+        <textarea id="editor" placeholder="Start typing..."></textarea>
+        <div id="autocomplete"></div>
+    </div>
+
+    <iframe id="preview"></iframe>
+</div>
+
+<script>
+const editor = document.getElementById("editor");
+const preview = document.getElementById("preview");
+const formatSelect = document.getElementById("format");
+const autocomplete = document.getElementById("autocomplete");
+
+const keywords = {
+    html: ["html","head","body","div","span","h1","h2","p","img","a","script","style","link","meta","title"],
+    js: ["function","const","let","var","if","else","for","while","return","console","document","window"],
+    css: ["color","background","width","height","margin","padding","display","flex","grid","position"],
+    py: ["def","print","if","else","elif","for","while","return","import","from","class"],
+    json: ["true","false","null"]
+};
+
+editor.addEventListener("input", () => {
+    updatePreview();
+    showAutocomplete();
+});
+
+formatSelect.addEventListener("change", () => {
+    editor.value = "";
+    updatePreview();
+    hideAutocomplete();
+});
+
+function updatePreview() {
+    const format = formatSelect.value;
+    const content = editor.value;
+
+    if (format === "html") {
+        preview.srcdoc = content;
+    } else if (format === "json") {
+        try {
+            const pretty = JSON.stringify(JSON.parse(content), null, 4);
+            preview.srcdoc = `<pre>${escapeHtml(pretty)}</pre>`;
+        } catch {
+            preview.srcdoc = `<pre style="color:red;">Invalid JSON</pre>`;
+        }
+    } else {
+        preview.srcdoc = `<pre>${escapeHtml(content)}</pre>`;
+    }
+}
+
+function showAutocomplete() {
+    const format = formatSelect.value;
+    const list = keywords[format];
+    if (!list) return hideAutocomplete();
+
+    const pos = editor.selectionStart;
+    const text = editor.value.slice(0, pos);
+    const match = text.match(/(\w+)$/);
+    if (!match) return hideAutocomplete();
+
+    const current = match[1];
+    const matches = list.filter(w => w.startsWith(current) && w !== current);
+    if (!matches.length) return hideAutocomplete();
+
+    autocomplete.innerHTML = "";
+    matches.forEach(word => {
+        const div = document.createElement("div");
+        div.textContent = word;
+        div.onclick = () => insertWord(word, current);
+        autocomplete.appendChild(div);
+    });
+
+    autocomplete.style.display = "block";
+}
+
+function insertWord(word, current) {
+    const pos = editor.selectionStart;
+    const before = editor.value.slice(0, pos - current.length);
+    const after = editor.value.slice(pos);
+    editor.value = before + word + after;
+    editor.focus();
+    hideAutocomplete();
+    updatePreview();
+}
+
+function hideAutocomplete() {
+    autocomplete.style.display = "none";
+}
+
+function downloadFile() {
+    let content = editor.value;
+    const format = formatSelect.value;
+
+    if (format === "json") {
+        try {
+            content = JSON.stringify(JSON.parse(content), null, 4);
+        } catch {}
+    }
+
+    const blob = new Blob([content], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `file.${format}`;
+    link.click();
+}
+
+function escapeHtml(text) {
+    return text.replace(/&/g, "&amp;")
+               .replace(/</g, "&lt;")
+               .replace(/>/g, "&gt;");
+}
+</script>
+
+</body>
+</html>

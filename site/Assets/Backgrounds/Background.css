@@ -1,0 +1,10 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0a1f3a;          /* dark blue fallback */
+    background-image: url("assets/backgrounds/global-network-bg.png");
+    background-size: cover;             /* fills the screen */
+    background-position: center;        /* center the image */
+    background-repeat: no-repeat;       /* no tiling */
+    background-attachment: fixed;       /* keeps it static behind content */
+}

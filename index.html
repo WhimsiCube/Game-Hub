@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WhimsiCube Game Hub - Offline Games</title>
+  <link rel="icon" type="image/png" href="site/Assets/Thumbnails/icon.png">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      background: #0b1c2d;
+      color: white;
+    }
+
+    header {
+      padding: 16px;
+      background: #102a44;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    h1 {
+      font-weight: 900;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .games {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .game-card {
+      background: #122b44;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .game-card img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+    }
+
+    .game-title {
+      padding: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    /* Password screen styling (if you use it) */
+    #passwordDiv {
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    #passwordDiv input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<header>🎮 WhimsiCube Offline Game Hub</header>
+
+<!-- Click sound audio -->
+<audio id="clickSound" src="site/Assets/Sounds/click.mp3" preload="auto"></audio>
+
+<div class="games">
+  <div class="game-card" onclick="play('site/Games/HTML/Scratch/Road.html')">
+    <img src="site/Assets/Thumbnails/road.png" alt="Road Designer">
+    <div class="game-title">Road Designer</div>
+  </div>
+
+  <div class="game-card" onclick="play('site/Games/HTML/Scratch/GD.html')">
+    <img src="site/Assets/Thumbnails/gd.png" alt="Geometry Dash">
+    <div class="game-title">Geometry Dash</div>
+  </div>
+
+  <div class="game-card" onclick="play('site/Games/HTML/Other/Tetris/index.html')">
+    <img src="site/Assets/Thumbnails/tetris.png" alt="Tetris">
+    <div class="game-title">Tetris</div>
+  </div>
+
+  <div class="game-card" onclick="play('site/Games/HTML/FNAF/FNAF1/index.html')">
+    <img src="site/Assets/Thumbnails/fnaf3.png" alt="FNAF 3">
+    <div class="game-title">FNAF 3</div>
+  </div>
+
+  <div class="game-card" onclick="play('site/Games/HTML/FNAF/FNAF2/index.html')">
+    <img src="site/Assets/Thumbnails/fnaf2.png" alt="FNAF 2">
+    <div class="game-title">FNAF 2</div>
+  </div>
+
+  <div class="game-card" onclick="play('site/Games/HTML/Other/Sandboxels/index.html')">
+    <img src="site/Assets/Thumbnails/sand.png" alt="Sandboxels">
+    <div class="game-title">Sandboxels</div>
+  </div>
+
+  <div class="game-card" onclick="play('site/Games/HTML/Other/Holegame/index.html')">
+    <img src="site/Assets/Thumbnails/hole.png" alt="Hole.io Ripoff">
+    <div class="game-title">Hole.io Ripoff</div>
+  </div>
+
+  <div class="game-card" onclick="play('site/Games/DEV TOOLS/index.html')">
+    <img src="site/Assets/Thumbnails/dev1.png" alt="Dev Tools">
+    <div class="game-title">Dev Tools</div>
+  </div>
+</div>
+
+<footer>
+  Offline Games • File-only • No hosting • No proxy • SUBSCRIBE TO WHIMSICUBE FOR MORE GAMES!!!
+</footer>
+
+<script>
+  // Play the click sound and open the game
+  function play(path) {
+    const sound = document.getElementById("clickSound");
+    sound.currentTime = 0; // rewind to start
+    sound.play();           // play sound
+    window.open(path, '_blank');    
+  }
+</script>
+
+</body>
+</html>

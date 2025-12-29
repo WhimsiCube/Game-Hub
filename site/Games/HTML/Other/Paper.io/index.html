@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Paper.io Mini</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #0b1c2d;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    #ui {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      font-size: 14px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div id="ui"></div>
+
+<canvas id="game"></canvas>
+
+<script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML Encyclopedia</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <h1>📘 HTML Encyclopedia</h1>
+
+  <!-- Search box -->
+  <input
+    id="search"
+    type="text"
+    placeholder="Search HTML tags (h1, div, img...)"
+    oninput="searchHTML()"
+  >
+
+  <!-- Category buttons -->
+  <div class="buttons">
+    <button onclick="showCategory('structure')">Structure</button>
+    <button onclick="showCategory('text')">Text</button>
+    <button onclick="showCategory('semantic')">Semantic</button>
+    <button onclick="showCategory('media')">Media</button>
+    <button onclick="showCategory('forms')">Forms</button>
+  </div>
+
+  <!-- Category title + description -->
+  <h2 id="category-title">Choose a category</h2>
+  <p id="category-desc">
+    Click a category above to learn about HTML tags.
+  </p>
+
+  <!-- Entries will appear here -->
+  <div id="entries"></div>
+
+  <!-- Footer -->
+  <footer>
+    <pre id="html-start"></pre>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="cyc.js"></script>
+
+</body>
+</html>
