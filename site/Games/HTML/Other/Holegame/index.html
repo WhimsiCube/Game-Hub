@@ -1,250 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<!-- Favicon / Icon -->
-<link rel="icon" type="image/png" href="hole.png">
-<meta charset="UTF-8">
-<title>Hole.io Game (ChatGPT Remake)</title>
-<style>
-html, body {
-  margin: 0;
-  overflow: hidden;
-  background: #888;
-}
-canvas { display:block; }
-</style>
+  <meta charset="UTF-8">
+  <title>Hole Game - WhimsiCube Game Hub</title>
+  <link rel="icon" type="image/png" href="a/icons.png">
+
+  <style>
+    body {
+      margin: 0;
+      background: #0b1c2d;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      box-sizing: border-box;
+    }
+
+    iframe {
+      width: 80vw;
+      height: 45vw;
+      max-width: 960px;
+      max-height: 540px;
+      border: none;
+      border-radius: 12px;
+      background: black;
+    }
+
+    .controls {
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      background: #1f4e7a;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #2c6aa3;
+    }
+
+    .description {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.85;
+      text-align: center;
+      max-width: 800px;
+    }
+  </style>
 </head>
 <body>
 
-<canvas id="c"></canvas>
+  <div class="container">
 
-<script>
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+    <iframe id="gameFrame" src="a/index.html"></iframe>
 
-// ===== WORLD SETTINGS =====
-const worldSize = 2000;
-const cellSize = 200;
-const roadSize = 60;
+    <div class="description">
+      This is a Hole.io ripoff I generated using ChatGPT! Unfourtunatly, Fullscreen does not work properly with this! Sorry for any inconvenience.
+    </div>
 
-// ===== PLAYER =====
-const hole = {
-  x: worldSize / 2,
-  y: worldSize / 2,
-  r: 30,
-  speed: 2.2,
-  progress: 0,
-  needed: 20
-};
+  </div>
 
-// ===== INPUT =====
-const keys = {};
-onkeydown = e => keys[e.key.toLowerCase()] = true;
-onkeyup = e => keys[e.key.toLowerCase()] = false;
-
-// ===== OBJECT ARRAYS =====
-const buildings = [];
-const trash = [];
-const cars = [];
-
-// ===== GENERATE BUILDINGS + TRASH =====
-let index = 0;
-for (let x = 0; x < worldSize; x += cellSize) {
-  for (let y = 0; y < worldSize; y += cellSize) {
-
-    const big = index % 2 === 0;
-    const size = big ? 120 : 70;
-
-    buildings.push({
-      x: x + cellSize / 2 - size / 2,
-      y: y + cellSize / 2 - size / 2,
-      w: size,
-      h: size
-    });
-
-    for (let i = 0; i < 3; i++) {
-      trash.push({
-        x: x + Math.random() * (cellSize - 40) + 20,
-        y: y + Math.random() * (cellSize - 40) + 20,
-        r: 6
-      });
+  <script>
+    function fullscreenGame() {
+      const iframe = document.getElementById("gameFrame");
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else {
+        alert("Sorry, fullscreen not supported in your current browser. We support using the newest version of Chrome, Microsoft Edge, or Opera GX.");
+      }
     }
+  </script>
 
-    index++;
-  }
-}
-
-// ===== CREATE CARS (CENTERED ON ROADS, NOT BUILDINGS) =====
-for (let i = 0; i < 12; i++) {
-  const horizontal = Math.random() < 0.5;
-
-  if (horizontal) {
-    const roadY =
-      Math.floor(Math.random() * (worldSize / cellSize)) * cellSize;
-
-    cars.push({
-      x: Math.random() * worldSize,
-      y: roadY,
-      dir: "h",
-      speed: 1.5
-    });
-
-  } else {
-    const roadX =
-      Math.floor(Math.random() * (worldSize / cellSize)) * cellSize;
-
-    cars.push({
-      x: roadX,
-      y: Math.random() * worldSize,
-      dir: "v",
-      speed: 1.5
-    });
-  }
-}
-
-
-// ===== GAME LOOP =====
-function loop() {
-  update();
-  draw();
-  requestAnimationFrame(loop);
-}
-
-// ===== UPDATE =====
-function update() {
-  let dx = 0, dy = 0;
-  if (keys.w || keys.arrowup) dy--;
-  if (keys.s || keys.arrowdown) dy++;
-  if (keys.a || keys.arrowleft) dx--;
-  if (keys.d || keys.arrowright) dx++;
-
-  hole.x += dx * hole.speed;
-  hole.y += dy * hole.speed;
-
-  eatTrash();
-  eatBuildings();
-  eatCars();
-  moveCars();
-}
-
-// ===== EATING =====
-function eatTrash() {
-  for (let i = trash.length - 1; i >= 0; i--) {
-    if (distance(hole, trash[i]) < hole.r) {
-      trash.splice(i, 1);
-      gain(1);
-    }
-  }
-}
-
-function eatBuildings() {
-  for (let i = buildings.length - 1; i >= 0; i--) {
-    const b = buildings[i];
-    if (
-      hole.r > b.w / 2 &&
-      hole.x > b.x && hole.x < b.x + b.w &&
-      hole.y > b.y && hole.y < b.y + b.h
-    ) {
-      buildings.splice(i, 1);
-      gain(4);
-    }
-  }
-}
-
-function eatCars() {
-  for (let i = cars.length - 1; i >= 0; i--) {
-    if (distance(hole, cars[i]) < hole.r) {
-      cars.splice(i, 1);
-      gain(2);
-    }
-  }
-}
-
-function gain(n) {
-  hole.progress += n;
-  if (hole.progress >= hole.needed) {
-    hole.progress = 0;
-    hole.r += 4;
-  }
-}
-
-// ===== CAR MOVEMENT =====
-function moveCars() {
-  cars.forEach(c => {
-    if (c.dir === "h") {
-      c.x += c.speed;
-      if (c.x > worldSize) c.x = 0;
-    } else {
-      c.y += c.speed;
-      if (c.y > worldSize) c.y = 0;
-    }
-  });
-}
-
-// ===== DRAW =====
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const zoom = Math.max(0.55, 1 - hole.r / 400);
-  ctx.save();
-  ctx.translate(canvas.width / 2, canvas.height / 2);
-  ctx.scale(zoom, zoom);
-  ctx.translate(-hole.x, -hole.y);
-
-  // Roads
-  ctx.fillStyle = "#555";
-  for (let i = 0; i <= worldSize; i += cellSize) {
-    ctx.fillRect(i - roadSize / 2, 0, roadSize, worldSize);
-    ctx.fillRect(0, i - roadSize / 2, worldSize, roadSize);
-  }
-
-  // Buildings
-  ctx.fillStyle = "#333";
-  buildings.forEach(b => ctx.fillRect(b.x, b.y, b.w, b.h));
-
-  // Trash
-  ctx.fillStyle = "green";
-  trash.forEach(t => {
-    ctx.beginPath();
-    ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
-  // Cars (BIGGER + CENTERED)
-  ctx.fillStyle = "red";
-  cars.forEach(c => {
-    ctx.fillRect(c.x - 20, c.y - 9, 40, 18);
-  });
-
-  // Hole
-  ctx.beginPath();
-  ctx.arc(hole.x, hole.y, hole.r, 0, Math.PI * 2);
-  ctx.fillStyle = "black";
-  ctx.fill();
-
-  // Growth ring
-  ctx.strokeStyle = "red";
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.arc(
-    hole.x,
-    hole.y,
-    hole.r + 6,
-    -Math.PI / 2,
-    -Math.PI / 2 + (hole.progress / hole.needed) * Math.PI * 2
-  );
-  ctx.stroke();
-
-  ctx.restore();
-}
-
-function distance(a, b) {
-  return Math.hypot(a.x - b.x, a.y - b.y);
-}
-
-loop();
-</script>
 </body>
 </html>

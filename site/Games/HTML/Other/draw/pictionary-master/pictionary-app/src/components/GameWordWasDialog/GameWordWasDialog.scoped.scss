@@ -1,0 +1,27 @@
+.wordWas {
+  font-weight: bolder;
+}
+
+.playerScoreContainer {
+  overflow: hidden;
+
+  .playerScore {
+    text-align: center;
+  }
+
+  .guessed-correctly {
+    color: green;
+  }
+
+  .could-not-guess {
+    color: red;
+  }
+
+  .playerName {
+    max-width: 5rem;
+    overflow: hidden;
+    text-align: center;
+    font-size: medium;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+}

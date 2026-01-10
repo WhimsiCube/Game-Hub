@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZIP → MCADDON / MCPACK Converter</title>
+</head>
+<body>
+  <h1>ZIP → MCADDON / MCPACK Converter</h1>
+  
+  <input type="file" id="zipFile" accept=".zip"><br><br>
+  
+  <label for="outputType">Choose output type:</label>
+  <select id="outputType">
+    <option value="mcaddon">.mcaddon</option>
+    <option value="mcpack">.mcpack</option>
+  </select><br><br>
+  
+  <button id="convertBtn">Convert</button>
+  <p id="status"></p>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    const convertBtn = document.getElementById('convertBtn');
+    const status = document.getElementById('status');
+    
+    convertBtn.addEventListener('click', () => {
+      status.textContent = '';
+      const fileInput = document.getElementById('zipFile');
+      const outputType = document.getElementById('outputType').value;
+      
+      if (!fileInput.files.length) {
+        alert('Please select a ZIP file first!');
+        return;
+      }
+      
+      const zipFile = fileInput.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = async function() {
+        try {
+          const zip = await JSZip.loadAsync(reader.result);
+          
+          // Check for manifest.json
+          const manifestFile = Object.keys(zip.files).find(name => name.endsWith('manifest.json'));
+          if (!manifestFile) {
+            status.textContent = '❌ Invalid add-on: no manifest.json found!';
+            return;
+          }
+          
+          // Optional: parse manifest to check required fields
+          const manifestContent = await zip.file(manifestFile).async("string");
+          const manifest = JSON.parse(manifestContent);
+          if (!manifest.header || !manifest.modules) {
+            status.textContent = '❌ Invalid manifest structure!';
+            return;
+          }
+          
+          // Everything looks good → convert
+          const newFileName = zipFile.name.replace(/\.zip$/i, '') + '.' + outputType;
+          const blob = new Blob([reader.result], { type: 'application/zip' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = newFileName;
+          a.click();
+          URL.revokeObjectURL(url);
+          
+          status.textContent = '✅ Conversion successful!';
+        } catch (err) {
+          status.textContent = '❌ Error reading ZIP file!';
+          console.error(err);
+        }
+      };
+      
+      reader.readAsArrayBuffer(zipFile);
+    });
+  </script>
+</body>
+</html>

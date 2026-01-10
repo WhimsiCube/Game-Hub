@@ -1,0 +1,95 @@
+.toggleIcon {
+  color: black;
+}
+
+.darkMode .toggleIcon {
+  color: white;
+}
+
+.moonIcon {
+  color: blue;
+}
+
+.darkMode .sunIcon {
+  color: orange;
+}
+
+@keyframes animatBackground {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
+}
+
+.bg {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  display: block;
+  z-index: 1;
+  background-image: url("./../images/main-background.jpg");
+  background-repeat: repeat;
+  animation: animatBackground 30s alternate infinite;
+  height: 500vh;
+  transition: all 0.5s;
+}
+
+@media only screen and (max-device-width: 480px) {
+  .bg {
+    animation: animatBackground 300s alternate infinite;
+  }
+}
+
+.dark-mode-bg {
+  background-image: none;
+  background-color: #ca7968;
+  background-image: linear-gradient(315deg, #ca7968 0%, #0c0c0c 74%);
+  background-size: 200% 200%;
+  animation: gradient 6s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.main-wrapper-container {
+  position: fixed;
+  z-index: 999;
+}
+
+.pictionary-text {
+  font-size: 1.8em;
+  //border: 1px solid black;
+  border-radius: 10px;
+  // background-color: lightgray;
+  text-align: center;
+  // padding-top: 10px;
+  text-shadow: 0 0 10px azure, 0 0 20px aqua, 0 0 40px dodgerblue, 0 0 80px blue;
+  color: #000f89;
+  font-variant: small-caps;
+  font-weight: bold;
+  font-family: "Sacramento", cursive;
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+.darkMode {
+  .pictionary-text {
+    text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500,
+      0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
+    color: #fff6a9;
+  }
+}

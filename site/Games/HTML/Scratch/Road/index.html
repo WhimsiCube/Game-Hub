@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Road Designer - WhimsiCube Game Hub</title>
+  <link rel="icon" type="image/png" href="a/roads.png">
+
+  <style>
+    body {
+      margin: 0;
+      background: #0b1c2d;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      box-sizing: border-box;
+    }
+
+    iframe {
+      width: 80vw;
+      height: 45vw;
+      max-width: 960px;
+      max-height: 540px;
+      border: none;
+      border-radius: 12px;
+      background: black;
+    }
+
+    .controls {
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      background: #1f4e7a;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #2c6aa3;
+    }
+
+    .description {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.85;
+      text-align: center;
+      max-width: 800px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <iframe id="gameFrame" src="a/index.html"></iframe>
+
+    <div class="controls">
+      <button onclick="fullscreenGame()">⛶</button>
+    </div>
+
+    <div class="description">
+      This is a game where you get to design your own roads, and spawn cars to see how it will work! This was a scratch project, but I uploaded it here because it had to run on turbowarp, and I didn't want to go though the hassle of opening turbowarp every time I want to play this game! Now you can enjoy this game here.
+    </div>
+
+  </div>
+
+  <script>
+    function fullscreenGame() {
+      const iframe = document.getElementById("gameFrame");
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else {
+        alert("Sorry, fullscreen not supported in your current browser. We support using the newest version of Chrome, Microsoft Edge, or Opera GX.");
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Escape Road - WhimsiCube Game Hub</title>
+  <link rel="icon" type="image/png" href="icon.png">
+
+  <style>
+    body {
+      margin: 0;
+      background: #0b1c2d;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      box-sizing: border-box;
+    }
+
+    iframe {
+      width: 80vw;
+      height: 45vw;
+      max-width: 960px;
+      max-height: 540px;
+      border: none;
+      border-radius: 12px;
+      background: black;
+    }
+
+    .controls {
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      background: #1f4e7a;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #2c6aa3;
+    }
+
+    .description {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.85;
+      text-align: center;
+      max-width: 800px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <iframe id="gameFrame" src="a/index.html"></iframe>
+
+    <div class="controls">
+      <button onclick="fullscreenGame()">⛶</button>
+    </div>
+
+    <div class="description">
+       Escape Road is one of my friends favourite online game! you must run away from the cops! How fun, EVADING THE LAW!   
+</div>
+
+  </div>
+
+  <script>
+    function fullscreenGame() {
+      const iframe = document.getElementById("gameFrame");
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else {
+        alert("Fullscreen not supported in this browser.");
+      }
+    }
+  </script>
+
+</body>
+</html>
